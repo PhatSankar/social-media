@@ -4,6 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import LoginScreen from '../pages/auth/LoginScreen';
 import SignUpScreen from '../pages/auth/SignUpScreen';
 import {AuthContext} from '../context/AuthContext';
+import MainRoute from './MainRoute';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -23,17 +24,7 @@ const RootRoute = () => {
   }
 
   if (user !== null) {
-    return (
-      <View>
-        <Text>Hello there {user.email}</Text>
-        <Button
-          title="Logout"
-          onPress={() => {
-            logout();
-          }}
-        />
-      </View>
-    );
+    return <MainRoute />;
   }
   return (
     <Stack.Navigator initialRouteName="Login">

@@ -1,4 +1,7 @@
 {
   "name": "SocialMediaProject",
-  "displayName": "SocialMediaProject"
+  "displayName": "SocialMediaProject",
+  "expo": {
+    "plugins": ["expo-image-picker"]
+  }
 }
