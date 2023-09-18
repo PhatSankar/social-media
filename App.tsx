@@ -11,8 +11,11 @@ import React from 'react';
 import RootRoute from './src/navigation/RootRoute';
 import {QueryClient, QueryClientProvider} from 'react-query';
 import {AuthProvider} from './src/context/AuthContext';
+import {setupAxios} from './src/utils/AxiosUtils';
+import axios from 'axios';
 
 const queryClient = new QueryClient();
+setupAxios(axios);
 
 function App(): JSX.Element {
   return (

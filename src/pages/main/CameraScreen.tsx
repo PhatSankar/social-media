@@ -16,6 +16,8 @@ import {
 } from 'react-native-responsive-screen';
 import {Camera, CameraType} from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
+import {useNavigation} from '@react-navigation/native';
+import {MainStackParamList, StackNavigation} from '../../navigation/MainRoute';
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
 
@@ -27,7 +29,7 @@ const CameraScreen = () => {
     ImagePicker.useMediaLibraryPermissions();
   const [camera, setCamera] = useState<Camera | null>(null);
   const [image, setImage] = useState<string | null>(null);
-
+  const navigation = useNavigation<StackNavigation>();
   useEffect(() => {
     (async () => {
       await requestCameraPermission();
@@ -37,7 +39,7 @@ const CameraScreen = () => {
         galleryPermission?.status !== 'granted' ||
         cameraPermission?.status !== 'granted'
       ) {
-        Alert.alert('Need permission to work');
+        // Alert.alert('Need permission to work');
       }
     })();
   }, []);
@@ -59,8 +61,9 @@ const CameraScreen = () => {
   const takePicture = async () => {
     if (camera) {
       const data = await camera.takePictureAsync();
-      console.log(data.uri);
-      setImage(data.uri);
+      navigation.navigate('Post', {
+        imageUri: data.uri,
+      });
     }
   };
 
@@ -72,10 +75,10 @@ const CameraScreen = () => {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      navigation.navigate('Post', {
+        imageUri: result.assets[0].uri,
+      });
     }
   };
 
@@ -90,9 +93,6 @@ const CameraScreen = () => {
         />
       </View>
 
-      <Button title="Take picture" onPress={takePicture} />
-      <Button title="Get image gallery" onPress={pickImage} />
-
       {image && (
         <Image
           style={{flex: 1}}
@@ -101,6 +101,9 @@ const CameraScreen = () => {
           }}
         />
       )}
+
+      <Button title="Take picture" onPress={takePicture} />
+      <Button title="Get image gallery" onPress={pickImage} />
     </View>
   );
 };
