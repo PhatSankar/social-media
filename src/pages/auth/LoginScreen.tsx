@@ -20,7 +20,7 @@ import {useMutation} from 'react-query';
 import AuthService from '../../api/AuthService';
 import {AuthContext} from '../../context/AuthContext';
 
-export type StackNavigation = StackNavigationProp<RootStackParamList, 'Login'>;
+type StackNavigation = StackNavigationProp<RootStackParamList, 'Login'>;
 
 const LoginScreen = () => {
   const navigation = useNavigation<StackNavigation>();

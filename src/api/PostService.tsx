@@ -12,14 +12,12 @@ async function uploadImagePost({
   caption: string;
   userId: string;
 }) {
-  let isUploadImage = false;
   try {
     const resUploadImage = await UploadService.uploadImage(
       imageUri,
       userId,
       'posts',
     );
-    isUploadImage = true;
     const resInsertPost = await supabase.from('posts').insert([
       {
         user_id: userId,

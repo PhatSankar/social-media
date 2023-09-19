@@ -5,11 +5,20 @@ import FeedScreen from '../pages/main/FeedScreen';
 import CameraScreen from '../pages/main/CameraScreen';
 import ProfileScreen from '../pages/main/ProfileScreen';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import SearchScreen from '../pages/main/SearchScreen';
+import SearchRoute from './SearchRoute';
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<BottomTabParamList>();
 
 const EmptyScreen = () => {
   return <></>;
+};
+
+export type BottomTabParamList = {
+  Feed: undefined;
+  SearchContainer: undefined;
+  ContainerCamera: undefined;
+  Profile: undefined;
 };
 
 const BottomTab = () => {
@@ -26,6 +35,22 @@ const BottomTab = () => {
           tabBarIcon: ({focused, color, size}) => {
             return (
               <MaterialCommunityIcons name="home" size={size} color={color} />
+            );
+          },
+        }}
+      />
+      <Tab.Screen
+        name="SearchContainer"
+        component={SearchRoute}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({focused, color, size}) => {
+            return (
+              <MaterialCommunityIcons
+                name="magnify"
+                size={size}
+                color={color}
+              />
             );
           },
         }}
