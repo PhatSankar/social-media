@@ -1,12 +1,25 @@
 import axios from 'axios';
 
-async function uploadImage(imageUri: string, userId: string, pathName: string) {
+async function uploadImage(
+  imageUri: string,
+  userId: string,
+  pathName: string,
+  imageName?: string,
+) {
   try {
     const bodyFormData = new FormData();
-    const fileName = imageUri.substring(
-      imageUri.lastIndexOf('/') + 1,
-      imageUri.length,
-    );
+    let fileName;
+    if (imageName) {
+      fileName = `${imageName}${imageUri.substring(
+        imageUri.lastIndexOf('.'),
+        imageUri.length,
+      )}`;
+    } else {
+      fileName = imageUri.substring(
+        imageUri.lastIndexOf('/') + 1,
+        imageUri.length,
+      );
+    }
     console.log(imageUri);
     bodyFormData.append('image', {
       uri: imageUri,

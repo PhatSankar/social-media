@@ -17,7 +17,10 @@ import {
 import {Camera, CameraType} from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import {useNavigation} from '@react-navigation/native';
-import {MainStackParamList, StackNavigation} from '../../navigation/MainRoute';
+import {
+  MainStackNavigation,
+  MainStackParamList,
+} from '../../navigation/MainRoute';
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
 
@@ -29,7 +32,7 @@ const CameraScreen = () => {
     ImagePicker.useMediaLibraryPermissions();
   const [camera, setCamera] = useState<Camera | null>(null);
   const [image, setImage] = useState<string | null>(null);
-  const navigation = useNavigation<StackNavigation>();
+  const navigation = useNavigation<MainStackNavigation>();
   useEffect(() => {
     (async () => {
       await requestCameraPermission();

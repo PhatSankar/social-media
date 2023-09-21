@@ -1,8 +1,7 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createStackNavigator} from '@react-navigation/stack';
-import BottomTab from './BottomTab';
-import CameraScreen from '../pages/main/CameraScreen';
-import PostScreen from '../pages/main/PostScreen';
+import {
+  StackNavigationProp,
+  createStackNavigator,
+} from '@react-navigation/stack';
 import {NavigationProp} from '@react-navigation/native';
 import SearchScreen from '../pages/main/SearchScreen';
 import {IUser} from '../models/IUser';
@@ -15,9 +14,14 @@ export type SearchStackParamList = {
   };
 };
 
-export type StackNavigation = NavigationProp<SearchStackParamList>;
+export type SearchStackNavigation = NavigationProp<SearchStackParamList>;
 
 const Stack = createStackNavigator<SearchStackParamList>();
+
+export type StackSearchNavigation = StackNavigationProp<
+  SearchStackParamList,
+  'Search'
+>;
 
 const SearchRoute = () => {
   return (

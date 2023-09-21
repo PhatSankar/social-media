@@ -1,5 +1,5 @@
 import {View, Text, Image} from 'react-native';
-import React from 'react';
+import React, {memo} from 'react';
 type ImageContainerProps = {
   imageUrl: string;
 };
@@ -17,4 +17,4 @@ const ImageContainer = (props: ImageContainerProps) => {
   );
 };
 
-export default ImageContainer;
+export default memo(ImageContainer);

@@ -1,29 +1,19 @@
-import {View, Text, Image} from 'react-native';
-import React, {useContext} from 'react';
+import {View, Text, Image, StyleSheet} from 'react-native';
+import React, {memo, useContext} from 'react';
 import {IUser} from '../models/IUser';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {SearchStackParamList} from '../navigation/SearchRoute';
+import {StackSearchNavigation} from '../navigation/SearchRoute';
 import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import {BottomTabParamList} from '../navigation/BottomTab';
+import {BottomTabNavigation, BottomTabParamList} from '../navigation/BottomTab';
+import StringUtils from '../utils/StringUtils';
 type ProfileTileProps = {
   user: IUser;
 };
-
-type StackSearchNavigation = StackNavigationProp<
-  SearchStackParamList,
-  'Search'
->;
-type BottomTabNavigation = BottomTabNavigationProp<
-  BottomTabParamList,
-  'SearchContainer'
->;
 
 const ProfileTile = (props: ProfileTileProps) => {
   const navigationSearchStack = useNavigation<StackSearchNavigation>();
@@ -42,25 +32,16 @@ const ProfileTile = (props: ProfileTileProps) => {
           navigationBottomTab.navigate('Profile');
         }
       }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          padding: 8,
-        }}>
+      <View style={styles.container}>
         {props.user.avatar ? (
           <Image
-            style={{
-              width: wp(15),
-              height: wp(15),
-              borderRadius: wp(15) / 2,
-              overflow: 'hidden',
-              marginRight: 8,
-            }}
+            style={styles.image}
             source={{
-              uri: props.user.avatar.includes('localhost')
-                ? props.user.avatar.replace('localhost', 'http://10.0.2.2')
-                : `http://${props.user.avatar}`,
+              uri: `${StringUtils.convertUrlToLocalEmulator(
+                props.user.avatar,
+              )}${
+                props.user.updated_at ? `?cache=${props.user.updated_at}` : ''
+              }`,
             }}
             onError={error => {
               console.log(error.nativeEvent);
@@ -68,26 +49,32 @@ const ProfileTile = (props: ProfileTileProps) => {
           />
         ) : (
           <Image
-            style={{
-              width: wp(15),
-              height: wp(15),
-              borderRadius: wp(15) / 2,
-              overflow: 'hidden',
-              marginRight: 8,
-            }}
+            style={styles.image}
             source={require('../../public/images/default_ava.png')}
           />
         )}
-        <Text
-          style={{
-            fontSize: wp(6),
-            color: 'black',
-          }}>
-          {props.user.name}
-        </Text>
+        <Text style={styles.text}>{props.user.name}</Text>
       </View>
     </TouchableOpacity>
   );
 };
 
-export default ProfileTile;
+const styles = StyleSheet.create({
+  image: {
+    width: wp(15),
+    height: wp(15),
+    borderRadius: wp(15) / 2,
+    overflow: 'hidden',
+    marginRight: 8,
+  },
+  text: {
+    fontSize: wp(6),
+    color: 'black',
+  },
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+  },
+});
+export default memo(ProfileTile);

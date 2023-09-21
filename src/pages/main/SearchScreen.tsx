@@ -1,4 +1,4 @@
-import {View, Text, FlatList, TouchableOpacity} from 'react-native';
+import {View, Text, FlatList, TouchableOpacity, StyleSheet} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {TextInput} from 'react-native-gesture-handler';
 import {useMutation} from 'react-query';
@@ -18,6 +18,7 @@ type StackNavigation = StackNavigationProp<SearchStackParamList, 'Search'>;
 const SearchScreen = () => {
   const [search, setSearch] = useState('');
   const createFetchUser = useMutation({
+    mutationKey: ['search'],
     mutationFn: UserService.fetchUserByName,
     onSuccess: data => {
       //   console.log(data);
@@ -31,27 +32,13 @@ const SearchScreen = () => {
     });
   }, [search]);
   return (
-    <View
-      style={{
-        flex: 1,
-        padding: 8,
-      }}>
-      <View
-        style={{
-          borderWidth: 0.5,
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 4,
-          borderRadius: 12,
-        }}>
+    <View style={styles.searchScreen}>
+      <View style={styles.searchContainer}>
         <MaterialCommunityIcons name="magnify" size={wp(7)} color={'grey'} />
         <TextInput
           placeholder="Type here"
           onChangeText={text => setSearch(text)}
-          style={{
-            flex: 1,
-            fontSize: wp(5),
-          }}
+          style={styles.input}
         />
       </View>
       <FlatList
@@ -64,5 +51,23 @@ const SearchScreen = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  searchScreen: {
+    flex: 1,
+    padding: 8,
+  },
+  searchContainer: {
+    borderWidth: 0.5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+    borderRadius: 12,
+  },
+  input: {
+    flex: 1,
+    fontSize: wp(5),
+  },
+});
 
 export default SearchScreen;

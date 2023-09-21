@@ -63,6 +63,7 @@ async function uploadUserAvatar({
       imageUri,
       udid,
       'avatar',
+      'avatar',
     );
     const resUpdateDb = await supabase
       .from('users')

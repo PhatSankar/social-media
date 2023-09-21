@@ -1,4 +1,4 @@
-import {View, Text, Image, Button} from 'react-native';
+import {View, Text, Image, Button, StyleSheet} from 'react-native';
 import React, {useContext, useState} from 'react';
 import {StackScreenProps} from '@react-navigation/stack';
 import {MainStackParamList} from '../../navigation/MainRoute';
@@ -35,23 +35,14 @@ const PostScreen = ({
 
   return (
     <View style={{flex: 1, padding: 8}}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 4,
-          paddingBottom: 8,
-        }}>
+      <View style={styles.inputContainer}>
         <TextInput
           multiline
           placeholder="Write a caption"
-          style={{flex: 1, fontSize: hp(2)}}
+          style={styles.input}
           onChangeText={text => setCaption(text)}
         />
-        <Image
-          style={{width: wp(18), height: wp(18)}}
-          source={{uri: route.params.imageUri}}
-        />
+        <Image style={styles.image} source={{uri: route.params.imageUri}} />
       </View>
       {createPostMutation.isError && (
         <Text>Error while uploading, please try again</Text>
@@ -60,5 +51,16 @@ const PostScreen = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingBottom: 8,
+  },
+  input: {flex: 1, fontSize: hp(2)},
+  image: {width: wp(18), height: wp(18)},
+});
 
 export default PostScreen;

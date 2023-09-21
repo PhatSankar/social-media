@@ -3,4 +3,5 @@ export interface IUser {
   id: string;
   name: string;
   avatar: string;
+  updated_at?: string;
 }

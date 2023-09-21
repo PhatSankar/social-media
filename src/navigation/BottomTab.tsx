@@ -1,12 +1,15 @@
 import {View, Text} from 'react-native';
 import React from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import FeedScreen from '../pages/main/FeedScreen';
+import {
+  BottomTabNavigationProp,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
 import CameraScreen from '../pages/main/CameraScreen';
 import ProfileScreen from '../pages/main/ProfileScreen';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import SearchScreen from '../pages/main/SearchScreen';
 import SearchRoute from './SearchRoute';
+import FeedScreen from '../pages/main/FeedScreen';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -20,6 +23,11 @@ export type BottomTabParamList = {
   ContainerCamera: undefined;
   Profile: undefined;
 };
+
+export type BottomTabNavigation = BottomTabNavigationProp<
+  BottomTabParamList,
+  'SearchContainer'
+>;
 
 const BottomTab = () => {
   return (
