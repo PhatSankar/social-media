@@ -68,7 +68,10 @@ async function fetchFollowingPost(
       .select('*,users(name,avatar)')
       .in('user_id', [
         ...followingIdList.map(following => following.following_id),
-      ]);
+      ])
+      .order('created_at', {
+        ascending: false,
+      });
     if (error) {
       throw error;
     }

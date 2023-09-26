@@ -23,8 +23,6 @@ const FeedScreen = () => {
     mutationKey: ['post-feed', user?.id],
     mutationFn: PostService.fetchFollowingPost,
     onSuccess: data => {
-      console.log(data);
-      // console.log(data.at(0).users?.avatar);
       setPostList(data);
     },
   });

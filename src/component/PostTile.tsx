@@ -15,10 +15,13 @@ import {
 import StringUtils from '../utils/StringUtils';
 
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+
 import {useNavigation} from '@react-navigation/native';
 import {MainStackNavigation} from '../navigation/MainRoute';
 import LikeService from '../api/LikeService';
 import {AuthContext} from '../context/AuthContext';
+import {useMutation, useQuery, useQueryClient} from 'react-query';
 
 type PostTileProps = {
   post: IPost;
@@ -29,6 +32,41 @@ const PostTile = (props: PostTileProps) => {
   const [showMore, setShowMore] = useState(false);
   const navigation = useNavigation<MainStackNavigation>();
   const {user} = useContext(AuthContext);
+  const [isLiked, setIsLiked] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  const createInsertLikeMutation = useMutation({
+    mutationFn: LikeService.insertikePost,
+    onSuccess: data => {
+      queryClient.invalidateQueries(['like', post.id, user?.id], {
+        exact: true,
+      });
+      queryClient.invalidateQueries(['following-list', user?.id], {
+        exact: true,
+      });
+    },
+  });
+
+  const createDeleteLikeMutation = useMutation({
+    mutationFn: LikeService.deleteikePost,
+    onSuccess: data => {
+      queryClient.invalidateQueries(['like', post.id, user?.id], {
+        exact: true,
+      });
+      queryClient.invalidateQueries(['following-list', user?.id], {
+        exact: true,
+      });
+    },
+  });
+  const fetchIsLikesQuery = useQuery({
+    queryKey: ['like', post.id, user?.id],
+    queryFn: () => LikeService.fetchIsLike(post.id, user?.id!),
+    onSuccess: data => {
+      // console.log(!(data.length !== 0));
+      setIsLiked(data.length !== 0);
+    },
+  });
 
   return (
     <View
@@ -80,14 +118,38 @@ const PostTile = (props: PostTileProps) => {
         style={{
           marginHorizontal: 8,
         }}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('Comment', {
-              post: post,
-            });
-          }}>
-          <SimpleLineIcons name="bubble" size={wp(6)} />
-        </TouchableOpacity>
+        <View style={{flexDirection: 'row', gap: 8}}>
+          <TouchableOpacity
+            onPress={
+              fetchIsLikesQuery.isLoading
+                ? undefined
+                : () =>
+                    isLiked
+                      ? createDeleteLikeMutation.mutate({
+                          postId: post.id,
+                          userId: user?.id!,
+                        })
+                      : createInsertLikeMutation.mutate({
+                          postId: post.id,
+                          userId: user?.id!,
+                        })
+            }>
+            <AntDesign
+              name={isLiked ? 'heart' : 'hearto'}
+              size={wp(6)}
+              color={isLiked ? 'red' : undefined}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Comment', {
+                post: post,
+              });
+            }}>
+            <SimpleLineIcons name="bubble" size={wp(6)} />
+          </TouchableOpacity>
+        </View>
+        <Text>{post.likes_count} likes</Text>
         <View
           style={{
             flexDirection: 'row',
@@ -115,12 +177,6 @@ const PostTile = (props: PostTileProps) => {
           </Text>
         </View>
       </View>
-      <Button
-        title="Like"
-        onPress={async () => {
-          await LikeService.updateLikePost(post.id, user?.id!);
-        }}
-      />
     </View>
   );
 };

@@ -6,11 +6,14 @@ import {
 } from 'react-native-responsive-screen';
 import {useNavigation} from '@react-navigation/native';
 import TextInputField from '../../component/TextInputField';
-import {StackNavigation} from './LoginScreen';
 import {useMutation} from 'react-query';
 import AuthService from '../../api/AuthService';
 import supabase from '../../supabase/supabaseClient';
 import {AuthContext} from '../../context/AuthContext';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackParamList} from '../../navigation/RootRoute';
+
+type StackNavigation = StackNavigationProp<RootStackParamList, 'SignUp'>;
 
 const SignUpScreen = () => {
   const navigation = useNavigation<StackNavigation>();
