@@ -14,7 +14,6 @@ import {StackScreenProps} from '@react-navigation/stack';
 import {MainStackParamList} from '../../navigation/MainRoute';
 import {useMutation, useQuery, useQueryClient} from 'react-query';
 import CommentService from '../../api/CommentService';
-import {FlatList} from 'react-native-gesture-handler';
 import {AuthContext} from '../../context/AuthContext';
 import CommentTile from '../../component/CommentTile';
 import UserService from '../../api/UserService';
@@ -25,6 +24,7 @@ import {
 } from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import PostTile from '../../component/PostTile';
+import {FlashList} from '@shopify/flash-list';
 
 const CommentScreen = ({
   navigation,
@@ -75,7 +75,7 @@ const CommentScreen = ({
   return (
     <View style={styles.flex}>
       <View style={styles.flex}>
-        <FlatList
+        <FlashList
           // ListHeaderComponent={<PostTile post={post} />}
           data={fetchCommentQuery.data}
           keyExtractor={item => item.id}

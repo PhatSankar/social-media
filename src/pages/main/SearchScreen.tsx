@@ -1,4 +1,4 @@
-import {View, Text, FlatList, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {TextInput} from 'react-native-gesture-handler';
 import {useMutation} from 'react-query';
@@ -12,6 +12,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import ProfileTile from '../../component/ProfileTile';
+import {FlashList} from '@shopify/flash-list';
 
 type StackNavigation = StackNavigationProp<SearchStackParamList, 'Search'>;
 
@@ -41,12 +42,13 @@ const SearchScreen = () => {
           style={styles.input}
         />
       </View>
-      <FlatList
+      <FlashList
         data={createFetchUser.data}
         keyExtractor={item => item.id}
         renderItem={item => {
           return <ProfileTile user={item.item} />;
         }}
+        estimatedItemSize={100}
       />
     </View>
   );

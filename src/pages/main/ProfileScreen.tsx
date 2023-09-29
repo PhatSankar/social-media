@@ -4,12 +4,12 @@ import {useQuery} from 'react-query';
 import {AuthContext} from '../../context/AuthContext';
 import PostService from '../../api/PostService';
 import {useRefetchOnFocus} from '../../hooks/useRefetchHook';
-import {FlatList} from 'react-native-gesture-handler';
 
 import ImageContainer from '../../component/ImageContainer';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {SearchStackParamList} from '../../navigation/SearchRoute';
 import HeaderProfile from '../../component/HeaderProfile';
+import {FlashList} from '@shopify/flash-list';
 
 type RouteProps = RouteProp<SearchStackParamList, 'ProfileSearch'>;
 
@@ -41,10 +41,11 @@ const ProfileScreen = () => {
   useRefetchOnFocus(postQuery.refetch);
 
   return (
-    <View>
-      <FlatList
+    <View style={{flex: 1}}>
+      <FlashList
         data={postQuery.data}
         numColumns={3}
+        estimatedItemSize={57}
         ListHeaderComponent={
           <HeaderProfile
             profileId={profileId}

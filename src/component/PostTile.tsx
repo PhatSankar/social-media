@@ -72,7 +72,7 @@ const PostTile = (props: PostTileProps) => {
     <View
       style={{
         // borderWidth: 0.5,
-        marginBottom: 8,
+        marginBottom: 12,
         // borderBottomWidth: 0.5,
       }}>
       <View
@@ -98,7 +98,9 @@ const PostTile = (props: PostTileProps) => {
         )}
         <Text
           style={{
-            fontSize: wp(5),
+            fontSize: wp(6),
+            fontWeight: '500',
+            color: 'black',
           }}>
           {post.users?.name}
         </Text>
@@ -149,7 +151,12 @@ const PostTile = (props: PostTileProps) => {
             <SimpleLineIcons name="bubble" size={wp(6)} />
           </TouchableOpacity>
         </View>
-        <Text>{post.likes_count} likes</Text>
+        <Text
+          style={{
+            fontSize: wp(4.5),
+          }}>
+          {post.likes_count} likes
+        </Text>
         <View
           style={{
             flexDirection: 'row',
@@ -183,9 +190,9 @@ const PostTile = (props: PostTileProps) => {
 
 const styles = StyleSheet.create({
   avatar: {
-    width: wp(7),
-    height: wp(7),
-    borderRadius: wp(7) / 2,
+    width: wp(10),
+    height: wp(10),
+    borderRadius: wp(10) / 2,
     overflow: 'hidden',
     marginRight: 8,
   },
@@ -195,12 +202,12 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   textName: {
-    fontSize: wp(4.3),
+    fontSize: wp(5.5),
     color: 'black',
     fontWeight: '700',
   },
   textCaption: {
-    fontSize: wp(4.3),
+    fontSize: wp(5.5),
     color: 'black',
   },
 });

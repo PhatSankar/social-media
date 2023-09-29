@@ -6,7 +6,7 @@ type ImageContainerProps = {
 const ImageContainer = (props: ImageContainerProps) => {
   return (
     <Image
-      style={{flex: 1 / 3, aspectRatio: 1, marginHorizontal: 1}}
+      style={{flex: 1, aspectRatio: 1, marginHorizontal: 1, marginBottom: 1}}
       source={{
         uri: props.imageUrl,
       }}

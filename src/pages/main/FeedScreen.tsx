@@ -1,4 +1,4 @@
-import {View, Text, ActivityIndicator, FlatList, Button} from 'react-native';
+import {View, Text, ActivityIndicator, Button} from 'react-native';
 import React, {useContext, useState} from 'react';
 import {useMutation, useQuery} from 'react-query';
 import {AuthContext} from '../../context/AuthContext';
@@ -8,6 +8,7 @@ import {IFollowing} from '../../models/IFollowing';
 import PostTile from '../../component/PostTile';
 import {useRefetchOnFocus} from '../../hooks/useRefetchHook';
 import {IPost} from '../../models/IPost';
+import {FlashList} from '@shopify/flash-list';
 
 const FeedScreen = () => {
   const {user} = useContext(AuthContext);
@@ -35,13 +36,14 @@ const FeedScreen = () => {
     );
   }
   return (
-    <View>
-      <FlatList
+    <View style={{flex: 1}}>
+      <FlashList
         data={postList}
         keyExtractor={item => item.id}
         renderItem={post => {
           return <PostTile post={post.item} />;
         }}
+        estimatedItemSize={440}
       />
     </View>
   );
