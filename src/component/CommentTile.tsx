@@ -20,12 +20,16 @@ const CommentTile = (props: CommentTileProps) => {
       {users.avatar ? (
         <Image
           style={styles.avatar}
+          resizeMethod="resize"
           source={{
             uri: StringUtils.convertUrlToLocalEmulator(users.avatar),
           }}
         />
       ) : (
-        <Image source={require('../../public/images/default_ava.png')} />
+        <Image
+          resizeMethod="resize"
+          source={require('../../public/images/default_ava.png')}
+        />
       )}
       <View style={{flex: 1}}>
         <View

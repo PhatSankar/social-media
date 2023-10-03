@@ -6,6 +6,7 @@ import {NavigationProp} from '@react-navigation/native';
 import SearchScreen from '../pages/main/SearchScreen';
 import {IUser} from '../models/IUser';
 import ProfileScreen from '../pages/main/ProfileScreen';
+import MessageScreen from '../pages/main/MessageScreen';
 
 export type SearchStackParamList = {
   Search: undefined;

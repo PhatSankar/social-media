@@ -67,7 +67,6 @@ const PostTile = (props: PostTileProps) => {
       setIsLiked(data.length !== 0);
     },
   });
-
   return (
     <View
       style={{
@@ -83,16 +82,20 @@ const PostTile = (props: PostTileProps) => {
         }}>
         {post.users?.avatar ? (
           <Image
+            resizeMethod="resize"
             style={styles.avatar}
             source={{
               uri: `${StringUtils.convertUrlToLocalEmulator(
                 post.users?.avatar!,
-              )}`,
+              )}${
+                post.users?.updated_at ? `?cache=${post.users?.updated_at}` : ''
+              }`,
             }}
           />
         ) : (
           <Image
             style={styles.avatar}
+            resizeMethod="resize"
             source={require('../../public/images/default_ava.png')}
           />
         )}
@@ -106,6 +109,7 @@ const PostTile = (props: PostTileProps) => {
         </Text>
       </View>
       <Image
+        resizeMethod="resize"
         style={{
           width: '100%',
           aspectRatio: 1,

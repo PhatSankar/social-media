@@ -65,7 +65,7 @@ async function fetchFollowingPost(
   try {
     const {data, error} = await supabase
       .from('posts')
-      .select('*,users(name,avatar)')
+      .select('*,users(name,avatar,updated_at)')
       .in('user_id', [
         ...followingIdList.map(following => following.following_id),
       ])

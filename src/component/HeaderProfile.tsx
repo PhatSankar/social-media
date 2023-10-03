@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, ActivityIndicator} from 'react-native';
 import React, {memo, useContext} from 'react';
 
 import {
@@ -14,6 +14,8 @@ import {AuthContext} from '../context/AuthContext';
 import UserService from '../api/UserService';
 import {useRefetchOnFocus} from '../hooks/useRefetchHook';
 import * as ImagePicker from 'expo-image-picker';
+import {useNavigation} from '@react-navigation/native';
+import {MainStackNavigation} from '../navigation/MainRoute';
 
 type HeaderProfileProps = {
   profileId?: string;
@@ -27,6 +29,8 @@ const HeaderProfile = (props: HeaderProfileProps) => {
   const queryClient = useQueryClient();
   const [galleryPermission, requestGalleryPermission] =
     ImagePicker.useMediaLibraryPermissions();
+
+  const navigationMainStack = useNavigation<MainStackNavigation>();
 
   const fetchIsFollowingQuery = useQuery({
     queryKey: ['following-list', user?.id],
@@ -102,67 +106,90 @@ const HeaderProfile = (props: HeaderProfileProps) => {
   };
   return (
     <View>
-      <View style={styles.infoContainer}>
-        <View style={{alignItems: 'center', gap: 4}}>
-          {fetchUserQuery.data?.at(0)?.avatar ? (
-            <Image
-              style={styles.avatar}
-              source={{
-                uri: `${StringUtils.convertUrlToLocalEmulator(
-                  fetchUserQuery.data.at(0)?.avatar!,
-                )}${
-                  fetchUserQuery.data?.at(0)?.updated_at
-                    ? `?cache=${fetchUserQuery.data?.at(0)?.updated_at}`
-                    : ''
-                }`,
-              }}
-              onError={error => {
-                console.log(error.nativeEvent);
-              }}
-            />
-          ) : (
-            <Image
-              style={styles.avatar}
-              source={require('../../public/images/default_ava.png')}
-            />
-          )}
+      {fetchUserQuery.isLoading ? (
+        <ActivityIndicator size={'large'} />
+      ) : (
+        <>
+          <View style={styles.infoContainer}>
+            <View style={{alignItems: 'center', gap: 4}}>
+              {fetchUserQuery.data?.at(0)?.avatar ? (
+                <Image
+                  resizeMethod="resize"
+                  style={styles.avatar}
+                  source={{
+                    uri: `${StringUtils.convertUrlToLocalEmulator(
+                      fetchUserQuery.data.at(0)?.avatar!,
+                    )}${
+                      fetchUserQuery.data?.at(0)?.updated_at
+                        ? `?cache=${fetchUserQuery.data?.at(0)?.updated_at}`
+                        : ''
+                    }`,
+                  }}
+                  onError={error => {
+                    console.log(error.nativeEvent);
+                  }}
+                />
+              ) : (
+                <Image
+                  resizeMethod="resize"
+                  style={styles.avatar}
+                  source={require('../../public/images/default_ava.png')}
+                />
+              )}
 
-          <Text style={styles.text}>{fetchUserQuery.data?.at(0)?.name}</Text>
-        </View>
-        <View style={styles.statisticContainer}>
-          <StatisticProfile quantity={postLength ?? 0} title={'Posts'} />
-          <StatisticProfile quantity={0} title={'Follower'} />
-          <StatisticProfile quantity={0} title={'Following'} />
-        </View>
-      </View>
+              <Text style={styles.text}>
+                {fetchUserQuery.data?.at(0)?.name}
+              </Text>
+            </View>
+            <View style={styles.statisticContainer}>
+              <StatisticProfile quantity={postLength ?? 0} title={'Posts'} />
+              <StatisticProfile quantity={0} title={'Follower'} />
+              <StatisticProfile quantity={0} title={'Following'} />
+            </View>
+          </View>
 
-      <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-        {isMyProfile ? (
-          <>
-            <ProfileButton title="Upload avatar" onPress={pickImage} />
-            <ProfileButton title="Edit profile" onPress={() => {}} />
-          </>
-        ) : (
-          <>
-            <ProfileButton
-              title={
-                fetchIsFollowingQuery.isLoading
-                  ? ''
-                  : !fetchIsFollowingQuery.data?.some(
-                      following => following.following_id === profileId,
-                    )
-                  ? 'Follow'
-                  : 'Following'
-              }
-              onPress={
-                fetchIsFollowingQuery.isLoading ? () => {} : onHandleFollow
-              }
-            />
-            <ProfileButton title="Message" onPress={() => {}} />
-          </>
-        )}
-      </View>
-      <View style={styles.divider} />
+          <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+            {isMyProfile ? (
+              <>
+                <ProfileButton title="Upload avatar" onPress={pickImage} />
+                <ProfileButton title="Edit profile" onPress={() => {}} />
+              </>
+            ) : (
+              <>
+                <ProfileButton
+                  title={
+                    fetchIsFollowingQuery.isLoading
+                      ? ''
+                      : !fetchIsFollowingQuery.data?.some(
+                          following => following.following_id === profileId,
+                        )
+                      ? 'Follow'
+                      : 'Following'
+                  }
+                  onPress={
+                    fetchIsFollowingQuery.isLoading ? () => {} : onHandleFollow
+                  }
+                />
+                <ProfileButton
+                  title="Message"
+                  onPress={() => {
+                    navigationMainStack.navigate('Message', {
+                      currentProfile: fetchUserQuery.data?.at(0)!,
+                      roomId: [
+                        user?.id.substring(0, user.id.indexOf('-')),
+                        profileId?.substring(0, profileId.indexOf('-')),
+                      ]
+                        .sort()
+                        .join(''),
+                    });
+                  }}
+                />
+              </>
+            )}
+          </View>
+          <View style={styles.divider} />
+        </>
+      )}
     </View>
   );
 };

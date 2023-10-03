@@ -99,6 +99,7 @@ const CameraScreen = () => {
       {image && (
         <Image
           style={{flex: 1}}
+          resizeMethod="resize"
           source={{
             uri: image,
           }}

@@ -40,7 +40,11 @@ async function fetchUserByName({search}: {search: string}): Promise<IUser[]> {
 
 async function fetchUserById({id}: {id: string}): Promise<IUser[]> {
   try {
-    const {data, error} = await supabase.from('users').select('*').eq('id', id);
+    const {data, error} = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', id)
+      .limit(1);
     if (error) {
       throw error;
     }

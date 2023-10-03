@@ -42,7 +42,11 @@ const PostScreen = ({
           style={styles.input}
           onChangeText={text => setCaption(text)}
         />
-        <Image style={styles.image} source={{uri: route.params.imageUri}} />
+        <Image
+          resizeMethod="resize"
+          style={styles.image}
+          source={{uri: route.params.imageUri}}
+        />
       </View>
       {createPostMutation.isError && (
         <Text>Error while uploading, please try again</Text>

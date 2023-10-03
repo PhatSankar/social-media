@@ -35,6 +35,7 @@ const ProfileTile = (props: ProfileTileProps) => {
       <View style={styles.container}>
         {props.user.avatar ? (
           <Image
+            resizeMethod="resize"
             style={styles.image}
             source={{
               uri: `${StringUtils.convertUrlToLocalEmulator(
@@ -49,6 +50,7 @@ const ProfileTile = (props: ProfileTileProps) => {
           />
         ) : (
           <Image
+            resizeMethod="resize"
             style={styles.image}
             source={require('../../public/images/default_ava.png')}
           />

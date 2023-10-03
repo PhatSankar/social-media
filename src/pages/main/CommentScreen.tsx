@@ -90,6 +90,7 @@ const CommentScreen = ({
         }}>
         {fetchUserQuery.data?.at(0)?.avatar ? (
           <Image
+            resizeMethod="resize"
             style={styles.avatar}
             source={{
               uri: StringUtils.convertUrlToLocalEmulator(
@@ -98,7 +99,10 @@ const CommentScreen = ({
             }}
           />
         ) : (
-          <Image source={require('../../../public/images/default_ava.png')} />
+          <Image
+            resizeMethod="resize"
+            source={require('../../../public/images/default_ava.png')}
+          />
         )}
 
         <TextInput

@@ -6,6 +6,7 @@ type ImageContainerProps = {
 const ImageContainer = (props: ImageContainerProps) => {
   return (
     <Image
+      resizeMethod="resize"
       style={{flex: 1, aspectRatio: 1, marginHorizontal: 1, marginBottom: 1}}
       source={{
         uri: props.imageUrl,
