@@ -1,6 +1,6 @@
 import {Button, View} from 'react-native';
 import React, {useContext, useMemo} from 'react';
-import {useQuery} from 'react-query';
+import {useMutation, useQuery} from 'react-query';
 import {AuthContext} from '../../context/AuthContext';
 import PostService from '../../api/PostService';
 import {useRefetchOnFocus} from '../../hooks/useRefetchHook';
@@ -10,6 +10,7 @@ import {RouteProp, useRoute} from '@react-navigation/native';
 import {SearchStackParamList} from '../../navigation/SearchRoute';
 import HeaderProfile from '../../component/HeaderProfile';
 import {FlashList} from '@shopify/flash-list';
+import AuthService from '../../api/AuthService';
 
 type RouteProps = RouteProp<SearchStackParamList, 'ProfileSearch'>;
 
@@ -40,6 +41,13 @@ const ProfileScreen = () => {
 
   useRefetchOnFocus(postQuery.refetch);
 
+  const createDeleteTokenMutation = useMutation({
+    mutationFn: AuthService.deleteToken,
+    onSuccess: () => {
+      logout();
+    },
+  });
+
   return (
     <View style={{flex: 1}}>
       <FlashList
@@ -59,7 +67,7 @@ const ProfileScreen = () => {
             <Button
               title="Logout"
               onPress={() => {
-                logout();
+                createDeleteTokenMutation.mutate();
               }}
             />
           ) : null

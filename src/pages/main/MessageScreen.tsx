@@ -119,6 +119,8 @@ const MessageScreen = ({
                     message: chat,
                     userId: user?.id,
                     roomId: route.params.roomId,
+                    toUserId: route.params.currentProfile.id,
+                    name: fetchUserQuery.data?.at(0)?.name,
                   });
                 }
               : undefined

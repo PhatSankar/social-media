@@ -3,7 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import BottomTab from './BottomTab';
 import CameraScreen from '../pages/main/CameraScreen';
 import PostScreen from '../pages/main/PostScreen';
-import {NavigationProp} from '@react-navigation/native';
+import {NavigationProp, RouteProp} from '@react-navigation/native';
 import CommentScreen from '../pages/main/CommentScreen';
 import {IPost} from '../models/IPost';
 import {IUser} from '../models/IUser';
@@ -14,6 +14,11 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import StringUtils from '../utils/StringUtils';
+import {useNavigation} from '@react-navigation/native';
+import messaging from '@react-native-firebase/messaging';
+import * as RootNavigation from './RootNavigation';
+import {useEffect} from 'react';
+
 export type MainStackParamList = {
   Home: undefined;
   Camera: undefined;
@@ -34,6 +39,21 @@ export type MainStackNavigation = NavigationProp<MainStackParamList>;
 const Stack = createStackNavigator<MainStackParamList>();
 
 const MainRoute = () => {
+  useEffect(() => {
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      if (remoteMessage) {
+        RootNavigation.navigate('Profile');
+      }
+    });
+
+    messaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        if (remoteMessage) {
+          RootNavigation.navigate('Profile');
+        }
+      });
+  }, []);
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen

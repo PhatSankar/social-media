@@ -58,7 +58,15 @@ const LoginScreen = () => {
 
       {error.length > 0 ? <Text style={{color: 'red'}}>{error}</Text> : <></>}
 
-      <TouchableOpacity style={styles.button} onPress={handleSignIn}>
+      <TouchableOpacity
+        style={{
+          ...styles.button,
+
+          backgroundColor: signInMutatuon.isLoading
+            ? 'gray'
+            : 'rgb(0, 149, 246)',
+        }}
+        onPress={signInMutatuon.isLoading ? undefined : handleSignIn}>
         <Text style={styles.textButton}>Login</Text>
       </TouchableOpacity>
 
@@ -100,7 +108,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 8,
-    backgroundColor: 'rgb(0, 149, 246)',
     padding: 8,
     borderRadius: 8,
   },

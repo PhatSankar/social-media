@@ -1,5 +1,5 @@
 import {View, Text, ActivityIndicator, Button} from 'react-native';
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import LoginScreen from '../pages/auth/LoginScreen';
 import SignUpScreen from '../pages/auth/SignUpScreen';
