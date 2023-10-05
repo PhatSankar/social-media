@@ -77,6 +77,7 @@ const CommentScreen = ({
       <View style={styles.flex}>
         <FlashList
           // ListHeaderComponent={<PostTile post={post} />}
+          estimatedItemSize={66}
           data={fetchCommentQuery.data}
           keyExtractor={item => item.id}
           renderItem={({item}) => <CommentTile comment={item} />}

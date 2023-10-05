@@ -1,6 +1,6 @@
-import {Button, View} from 'react-native';
+import {ActivityIndicator, Button, View} from 'react-native';
 import React, {useContext, useMemo} from 'react';
-import {useMutation, useQuery} from 'react-query';
+import {useInfiniteQuery, useMutation, useQuery} from 'react-query';
 import {AuthContext} from '../../context/AuthContext';
 import PostService from '../../api/PostService';
 import {useRefetchOnFocus} from '../../hooks/useRefetchHook';
@@ -33,13 +33,28 @@ const ProfileScreen = () => {
     }
   }, []);
 
-  const postQuery = useQuery({
-    queryKey: ['posts', profileId],
-    queryFn: () => PostService.fetchPost(profileId!),
-    onSuccess: data => {},
+  const postLengthQuery = useQuery({
+    queryKey: ['postLength', profileId],
+    queryFn: () => PostService.fetchPostLength(profileId!),
   });
 
-  useRefetchOnFocus(postQuery.refetch);
+  useRefetchOnFocus(postLengthQuery.refetch);
+
+  const postProfileInfiniteList = useInfiniteQuery(
+    ['posts', profileId],
+    ({pageParam}) =>
+      PostService.fetchPostByRange({
+        userId: profileId!,
+        page: pageParam,
+      }),
+    {
+      getNextPageParam: (lastPage, allPages) => {
+        return lastPage.length === 9 ? allPages.length : null;
+      },
+    },
+  );
+
+  useRefetchOnFocus(postProfileInfiniteList.refetch);
 
   const createDeleteTokenMutation = useMutation({
     mutationFn: AuthService.deleteToken,
@@ -51,27 +66,37 @@ const ProfileScreen = () => {
   return (
     <View style={{flex: 1}}>
       <FlashList
-        data={postQuery.data}
+        data={postProfileInfiniteList.data?.pages.flatMap(page => page)}
         numColumns={3}
         estimatedItemSize={57}
         ListHeaderComponent={
           <HeaderProfile
             profileId={profileId}
             isMyProfile={isMyProfile}
-            postLength={postQuery.data?.length}
+            postLength={postLengthQuery.data ?? 0}
           />
         }
         keyExtractor={(item, index) => index.toString()}
         ListFooterComponent={
           isMyProfile ? (
-            <Button
-              title="Logout"
-              onPress={() => {
-                createDeleteTokenMutation.mutate();
-              }}
-            />
+            <View>
+              {postProfileInfiniteList.hasNextPage ? (
+                <ActivityIndicator size={'large'} />
+              ) : undefined}
+              <Button
+                title="Logout"
+                onPress={() => {
+                  createDeleteTokenMutation.mutate();
+                }}
+              />
+            </View>
           ) : null
         }
+        onEndReached={() => {
+          if (postProfileInfiniteList.hasNextPage) {
+            postProfileInfiniteList.fetchNextPage();
+          }
+        }}
         renderItem={item => {
           const post = item.item;
           if (post.image_url.includes('localhost')) {

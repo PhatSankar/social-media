@@ -18,9 +18,9 @@ import {useNavigation} from '@react-navigation/native';
 import {MainStackNavigation} from '../navigation/MainRoute';
 
 type HeaderProfileProps = {
-  profileId: string;
+  profileId?: string;
   isMyProfile: boolean;
-  postLength: number;
+  postLength?: number;
 };
 
 const HeaderProfile = (props: HeaderProfileProps) => {

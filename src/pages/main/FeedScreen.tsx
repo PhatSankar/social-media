@@ -1,6 +1,6 @@
 import {View, Text, ActivityIndicator, Button} from 'react-native';
-import React, {useContext, useState} from 'react';
-import {useMutation, useQuery} from 'react-query';
+import React, {useContext, useMemo, useState} from 'react';
+import {useInfiniteQuery, useMutation, useQuery} from 'react-query';
 import {AuthContext} from '../../context/AuthContext';
 import FollowingService from '../../api/FollowingService';
 import PostService from '../../api/PostService';
@@ -12,21 +12,31 @@ import {FlashList} from '@shopify/flash-list';
 
 const FeedScreen = () => {
   const {user} = useContext(AuthContext);
-  const [postList, setPostList] = useState<IPost[]>([]);
   const fetchFollowingListQuery = useQuery({
     queryKey: ['following-list', user?.id],
     queryFn: () => FollowingService.fetchFollowingList(user?.id!),
-    onSuccess: data => {
-      fetchPostFeedFollowingQuery.mutate(data);
-    },
+    onSuccess: data => {},
   });
-  const fetchPostFeedFollowingQuery = useMutation({
-    mutationKey: ['post-feed', user?.id],
-    mutationFn: PostService.fetchFollowingPost,
-    onSuccess: data => {
-      setPostList(data);
+
+  const followingList = useMemo(() => {
+    return fetchFollowingListQuery.data;
+  }, [fetchFollowingListQuery.data]);
+
+  const postFollowingInfiniteQuery = useInfiniteQuery(
+    ['postsFollowing', followingList],
+    ({pageParam}) =>
+      PostService.fetchFollowingPostFromRange({
+        followingIdList: followingList ?? [],
+        page: pageParam,
+      }),
+    {
+      getNextPageParam: (lastPage, allPages) => {
+        return lastPage.length === 8 ? allPages.length : null;
+      },
     },
-  });
+  );
+
+  useRefetchOnFocus(postFollowingInfiniteQuery.refetch);
 
   if (fetchFollowingListQuery.isLoading) {
     return (
@@ -38,11 +48,22 @@ const FeedScreen = () => {
   return (
     <View style={{flex: 1}}>
       <FlashList
-        data={postList}
+        data={postFollowingInfiniteQuery.data?.pages.flatMap(page => page)}
         keyExtractor={item => item.id}
         renderItem={post => {
           return <PostTile post={post.item} />;
         }}
+        onEndReached={() => {
+          if (postFollowingInfiniteQuery.hasNextPage) {
+            postFollowingInfiniteQuery.fetchNextPage();
+          }
+        }}
+        ListFooterComponent={() =>
+          postFollowingInfiniteQuery.hasNextPage ? (
+            <ActivityIndicator size={'large'} />
+          ) : undefined
+        }
+        onEndReachedThreshold={3}
         estimatedItemSize={440}
       />
     </View>
