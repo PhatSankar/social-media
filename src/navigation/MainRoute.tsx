@@ -20,6 +20,7 @@ import * as RootNavigation from './RootNavigation';
 import {useEffect} from 'react';
 import {useMutation, useQuery} from 'react-query';
 import UserService from '../api/UserService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export type MainStackParamList = {
   Home: undefined;
@@ -52,12 +53,22 @@ const MainRoute = () => {
     });
     messaging()
       .getInitialNotification()
-      .then(remoteMessage => {
-        if (remoteMessage?.data?.roomId && remoteMessage.data.userId) {
-          RootNavigation.navigate('Message', {
-            profileId: remoteMessage.data.userId,
-            roomId: remoteMessage.data?.roomId,
-          });
+      .then(async remoteMessage => {
+        if (remoteMessage) {
+          const tempNoti = remoteMessage.notification;
+          const lastNoti = await AsyncStorage.getItem('lastNoti');
+          if (lastNoti !== remoteMessage.messageId) {
+            if (remoteMessage?.data?.roomId && remoteMessage.data.userId) {
+              RootNavigation.navigate('Message', {
+                profileId: remoteMessage.data.userId,
+                roomId: remoteMessage.data?.roomId,
+              });
+              await AsyncStorage.setItem(
+                'lastNoti',
+                remoteMessage.messageId ?? '',
+              );
+            }
+          }
         }
       });
   }, []);
