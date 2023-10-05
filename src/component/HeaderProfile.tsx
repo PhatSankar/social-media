@@ -18,9 +18,9 @@ import {useNavigation} from '@react-navigation/native';
 import {MainStackNavigation} from '../navigation/MainRoute';
 
 type HeaderProfileProps = {
-  profileId?: string;
+  profileId: string;
   isMyProfile: boolean;
-  postLength?: number;
+  postLength: number;
 };
 
 const HeaderProfile = (props: HeaderProfileProps) => {
@@ -174,7 +174,7 @@ const HeaderProfile = (props: HeaderProfileProps) => {
                   title="Message"
                   onPress={() => {
                     navigationMainStack.navigate('Message', {
-                      currentProfile: fetchUserQuery.data?.at(0)!,
+                      profileId: profileId!,
                       roomId: [
                         user?.id.substring(0, user.id.indexOf('-')),
                         profileId?.substring(0, profileId.indexOf('-')),

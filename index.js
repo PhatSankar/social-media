@@ -8,12 +8,19 @@ import {name as appName} from './app.json';
 import PushNotification, {Importance} from "react-native-push-notification";
 import messaging from '@react-native-firebase/messaging';
 import { useNavigation } from '@react-navigation/native';
+import * as RootNavigation from "./src/navigation/RootNavigation";
+ 
 
 
 
 PushNotification.configure({
     onNotification: function (notification) {
-
+      if (notification.data?.roomId && notification.data.userId) {
+        RootNavigation.navigate('Message', {
+          profileId: notification.data.userId,
+          roomId: notification.data?.roomId,
+        });
+      }
       },
 
     onRegistrationError: function(err) {

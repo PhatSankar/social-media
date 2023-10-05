@@ -18,6 +18,8 @@ import {useNavigation} from '@react-navigation/native';
 import messaging from '@react-native-firebase/messaging';
 import * as RootNavigation from './RootNavigation';
 import {useEffect} from 'react';
+import {useMutation, useQuery} from 'react-query';
+import UserService from '../api/UserService';
 
 export type MainStackParamList = {
   Home: undefined;
@@ -29,7 +31,7 @@ export type MainStackParamList = {
     imageUri: string;
   };
   Message: {
-    currentProfile: IUser;
+    profileId: string;
     roomId: string;
   };
 };
@@ -41,16 +43,21 @@ const Stack = createStackNavigator<MainStackParamList>();
 const MainRoute = () => {
   useEffect(() => {
     messaging().onNotificationOpenedApp(remoteMessage => {
-      if (remoteMessage) {
-        RootNavigation.navigate('Profile');
+      if (remoteMessage.data?.roomId && remoteMessage.data.userId) {
+        RootNavigation.navigate('Message', {
+          profileId: remoteMessage.data.userId,
+          roomId: remoteMessage.data?.roomId,
+        });
       }
     });
-
     messaging()
       .getInitialNotification()
       .then(remoteMessage => {
-        if (remoteMessage) {
-          RootNavigation.navigate('Profile');
+        if (remoteMessage?.data?.roomId && remoteMessage.data.userId) {
+          RootNavigation.navigate('Message', {
+            profileId: remoteMessage.data.userId,
+            roomId: remoteMessage.data?.roomId,
+          });
         }
       });
   }, []);
@@ -66,60 +73,9 @@ const MainRoute = () => {
       <Stack.Screen name="Comment" component={CommentScreen} />
       <Stack.Screen name="Camera" component={CameraScreen} />
       <Stack.Screen name="Post" component={PostScreen} />
-      <Stack.Screen
-        name="Message"
-        component={MessageScreen}
-        options={({route}) => ({
-          headerTitle: () => (
-            <View style={styles.headerContainer}>
-              {route.params.currentProfile.avatar ? (
-                <Image
-                  resizeMethod="resize"
-                  style={styles.avatar}
-                  source={{
-                    uri: `${StringUtils.convertUrlToLocalEmulator(
-                      route.params.currentProfile.avatar,
-                    )}${
-                      route.params.currentProfile.updated_at
-                        ? `?cache=${route.params.currentProfile.updated_at}`
-                        : ''
-                    }`,
-                  }}
-                  onError={error => {
-                    console.log(error.nativeEvent);
-                  }}
-                />
-              ) : (
-                <Image
-                  resizeMethod="resize"
-                  style={styles.avatar}
-                  source={require('../../public/images/default_ava.png')}
-                />
-              )}
-              <Text
-                style={{fontSize: wp(6), color: 'black', fontWeight: '500'}}>
-                {route.params.currentProfile.name}
-              </Text>
-            </View>
-          ),
-        })}
-      />
+      <Stack.Screen name="Message" component={MessageScreen} />
     </Stack.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  avatar: {
-    width: wp(10),
-    height: wp(10),
-    borderRadius: wp(10) / 2,
-    resizeMode: 'contain',
-  },
-});
 
 export default MainRoute;

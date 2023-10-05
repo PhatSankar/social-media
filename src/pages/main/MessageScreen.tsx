@@ -1,4 +1,4 @@
-import {View, FlatList, ActivityIndicator, Keyboard} from 'react-native';
+import {View, ActivityIndicator, Keyboard, Button} from 'react-native';
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
 import {socket} from '../../socket/Socket';
@@ -15,6 +15,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import HeaderMessage from '../../component/HeaderMessage';
 
 const MessageScreen = ({
   navigation,
@@ -30,6 +31,19 @@ const MessageScreen = ({
     onSuccess: data => {},
   });
 
+  const fetchProfileQuery = useQuery({
+    queryKey: ['user', route.params.profileId],
+    queryFn: () =>
+      UserService.fetchUserById({
+        id: route.params.profileId,
+      }),
+    onSuccess(data) {
+      navigation.setOptions({
+        headerTitle: () => <HeaderMessage profile={data.at(0)!} />,
+      });
+    },
+  });
+  const [test, settest] = useState(1);
   useEffect(() => {
     socket.on('connect', () => {
       socket.emit(
@@ -53,6 +67,7 @@ const MessageScreen = ({
     socket.connect();
 
     return () => {
+      setMessages([]);
       socket.off('connect');
       socket.off('disconnect');
       socket.off('chat');
@@ -60,7 +75,7 @@ const MessageScreen = ({
 
       socket.disconnect();
     };
-  }, []);
+  }, [route.params.profileId]);
 
   return (
     <View
@@ -70,7 +85,7 @@ const MessageScreen = ({
         paddingHorizontal: 12,
       }}>
       <View style={{flex: 1, paddingVertical: 4}}>
-        {fetchUserQuery.isLoading ? (
+        {fetchUserQuery.isLoading || fetchProfileQuery.isLoading ? (
           <ActivityIndicator size={'large'} />
         ) : (
           <FlashList
@@ -83,8 +98,8 @@ const MessageScreen = ({
             renderItem={({item}) => (
               <ChatTile
                 profile={
-                  item.userId === route.params.currentProfile.id
-                    ? route.params.currentProfile
+                  item.userId === fetchProfileQuery.data?.at(0)?.id
+                    ? fetchProfileQuery.data?.at(0)!
                     : fetchUserQuery.data?.at(0)!
                 }
                 chat={item}
@@ -119,7 +134,7 @@ const MessageScreen = ({
                     message: chat,
                     userId: user?.id,
                     roomId: route.params.roomId,
-                    toUserId: route.params.currentProfile.id,
+                    toUserId: route.params.profileId,
                     name: fetchUserQuery.data?.at(0)?.name,
                   });
                 }
