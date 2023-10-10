@@ -21,6 +21,7 @@ async function signUp({
       throw error;
     }
     await UserService.updateUserInfo({name, udid: data.user!.id});
+    await sendFcmToken(data.user!.id);
     return data;
   } catch (error) {
     console.log(error);

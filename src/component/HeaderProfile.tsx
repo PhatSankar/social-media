@@ -49,10 +49,23 @@ const HeaderProfile = (props: HeaderProfileProps) => {
   });
   useRefetchOnFocus(fetchUserQuery.refetch);
 
+  const followingCountQuery = useQuery({
+    queryKey: ['following-count', profileId],
+    queryFn: () => FollowingService.fetchFollowingCount(profileId!),
+  });
+
+  const followerCountQuery = useQuery({
+    queryKey: ['follower-count', profileId],
+    queryFn: () => FollowingService.fetchFollowerCount(profileId!),
+  });
+  useRefetchOnFocus(followingCountQuery.refetch);
+  useRefetchOnFocus(followerCountQuery.refetch);
+
   const createHandleFollowMutation = useMutation({
     mutationFn: FollowingService.handleFollow,
     onSuccess: data => {
       fetchIsFollowingQuery.refetch();
+      followerCountQuery.refetch();
     },
   });
 
@@ -143,8 +156,14 @@ const HeaderProfile = (props: HeaderProfileProps) => {
             </View>
             <View style={styles.statisticContainer}>
               <StatisticProfile quantity={postLength ?? 0} title={'Posts'} />
-              <StatisticProfile quantity={0} title={'Follower'} />
-              <StatisticProfile quantity={0} title={'Following'} />
+              <StatisticProfile
+                quantity={followerCountQuery.data ?? 0}
+                title={'Follower'}
+              />
+              <StatisticProfile
+                quantity={followingCountQuery.data ?? 0}
+                title={'Following'}
+              />
             </View>
           </View>
 

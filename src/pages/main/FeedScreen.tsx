@@ -1,4 +1,4 @@
-import {View, Text, ActivityIndicator, Button} from 'react-native';
+import {View, Text, ActivityIndicator, Button, StyleSheet} from 'react-native';
 import React, {useContext, useMemo, useState} from 'react';
 import {useInfiniteQuery, useMutation, useQuery} from 'react-query';
 import {AuthContext} from '../../context/AuthContext';
@@ -9,13 +9,16 @@ import PostTile from '../../component/PostTile';
 import {useRefetchOnFocus} from '../../hooks/useRefetchHook';
 import {IPost} from '../../models/IPost';
 import {FlashList} from '@shopify/flash-list';
+import SkeletonPostTile from '../../component/SkeletonPostTile';
 
 const FeedScreen = () => {
   const {user} = useContext(AuthContext);
   const fetchFollowingListQuery = useQuery({
     queryKey: ['following-list', user?.id],
     queryFn: () => FollowingService.fetchFollowingList(user?.id!),
-    onSuccess: data => {},
+    onSuccess: data => {
+      postFollowingInfiniteQuery.refetch();
+    },
   });
 
   const followingList = useMemo(() => {
@@ -46,7 +49,7 @@ const FeedScreen = () => {
     );
   }
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: 'white'}}>
       <FlashList
         data={postFollowingInfiniteQuery.data?.pages.flatMap(page => page)}
         keyExtractor={item => item.id}
@@ -60,7 +63,7 @@ const FeedScreen = () => {
         }}
         ListFooterComponent={() =>
           postFollowingInfiniteQuery.hasNextPage ? (
-            <ActivityIndicator size={'large'} />
+            <SkeletonPostTile />
           ) : undefined
         }
         onEndReachedThreshold={3}

@@ -8,7 +8,7 @@ async function fetchComments(postId: string): Promise<IComment[]> {
       .select('*,users(name,avatar)')
       .eq('post_id', postId)
       .order('created_at', {
-        ascending: true,
+        ascending: false,
       });
     if (error) {
       throw error;

@@ -64,7 +64,7 @@ const ProfileScreen = () => {
   });
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: 'white'}}>
       <FlashList
         data={postProfileInfiniteList.data?.pages.flatMap(page => page)}
         numColumns={3}

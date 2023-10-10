@@ -21,6 +21,7 @@ import messaging from '@react-native-firebase/messaging';
 import {Alert} from 'react-native';
 import {showLocalNotification} from './src/utils/NotificationAndroid';
 import {navigationRef} from './src/navigation/RootNavigation';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 const queryClient = new QueryClient();
 setupAxios(axios);
 
@@ -34,13 +35,15 @@ function App(): JSX.Element {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <NavigationContainer ref={navigationRef}>
-          <RootRoute />
-        </NavigationContainer>
-      </AuthProvider>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <NavigationContainer ref={navigationRef}>
+            <RootRoute />
+          </NavigationContainer>
+        </AuthProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }
 

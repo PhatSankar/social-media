@@ -83,6 +83,7 @@ const MessageScreen = ({
         flexDirection: 'column',
         flex: 1,
         paddingHorizontal: 12,
+        backgroundColor: 'white',
       }}>
       <View style={{flex: 1, paddingVertical: 4}}>
         {fetchUserQuery.isLoading || fetchProfileQuery.isLoading ? (
