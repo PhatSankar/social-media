@@ -10,6 +10,7 @@ import * as RootNavigation from './RootNavigation';
 import {useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import MeetingScreen from '../pages/main/MeetingScreen';
 
 export type MainStackParamList = {
   Home: undefined;
@@ -22,6 +23,9 @@ export type MainStackParamList = {
   };
   Message: {
     profileId: string;
+    roomId: string;
+  };
+  Meeting: {
     roomId: string;
   };
 };
@@ -74,6 +78,13 @@ const MainRoute = () => {
         <Stack.Screen name="Camera" component={CameraScreen} />
         <Stack.Screen name="Post" component={PostScreen} />
         <Stack.Screen name="Message" component={MessageScreen} />
+        <Stack.Screen
+          name="Meeting"
+          component={MeetingScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack.Navigator>
     </BottomSheetModalProvider>
   );

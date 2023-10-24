@@ -9,7 +9,9 @@ import PushNotification, {Importance} from "react-native-push-notification";
 import messaging from '@react-native-firebase/messaging';
 import { useNavigation } from '@react-navigation/native';
 import * as RootNavigation from "./src/navigation/RootNavigation";
- 
+import { LogBox } from "react-native"
+
+LogBox.ignoreAllLogs(true)
 
 
 
