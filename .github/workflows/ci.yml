@@ -23,8 +23,8 @@ jobs:
       - name: Install npm dependencies
         run: |
           npm install
-      - name: Cd android directory
-        run: cd android
+      # - name: Cd android directory
+      #   run: cd android
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
       - name: Build Android Release
