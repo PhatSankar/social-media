@@ -34,7 +34,7 @@ const PostScreen = ({
   };
 
   return (
-    <View style={{flex: 1, padding: 8}}>
+    <View style={{flex: 1, padding: 8, backgroundColor: 'white'}}>
       <View style={styles.inputContainer}>
         <TextInput
           multiline

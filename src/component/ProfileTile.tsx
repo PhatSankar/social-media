@@ -1,15 +1,12 @@
-import {View, Text, Image, StyleSheet} from 'react-native';
-import React, {memo, useContext} from 'react';
-import {IUser} from '../models/IUser';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {StackSearchNavigation} from '../navigation/SearchRoute';
 import {useNavigation} from '@react-navigation/native';
+import React, {memo, useContext} from 'react';
+import {Image, StyleSheet, Text, View} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import {AuthContext} from '../context/AuthContext';
-import {BottomTabNavigation, BottomTabParamList} from '../navigation/BottomTab';
+import {IUser} from '../models/IUser';
+import {BottomTabNavigation} from '../navigation/BottomTab';
+import {StackSearchNavigation} from '../navigation/SearchRoute';
 import StringUtils from '../utils/StringUtils';
 type ProfileTileProps = {
   user: IUser;

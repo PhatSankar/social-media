@@ -80,9 +80,44 @@ async function handleFollow({
     throw error;
   }
 }
+
+async function fetchFollowingCount(currentUserId: string): Promise<number> {
+  try {
+    const {error, count} = await supabase
+      .from('following')
+      .select('*', {count: 'exact'})
+      .eq('user_id', currentUserId);
+    if (error) {
+      throw error;
+    }
+    return count ?? 0;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+async function fetchFollowerCount(currentUserId: string): Promise<number> {
+  try {
+    const {error, count} = await supabase
+      .from('following')
+      .select('*', {count: 'exact'})
+      .eq('following_id', currentUserId);
+    if (error) {
+      throw error;
+    }
+    return count ?? 0;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 const FollowingService = {
   fetchFollowingList,
   fetchIsFollowing,
   handleFollow,
+  fetchFollowerCount,
+  fetchFollowingCount,
 };
 export default FollowingService;

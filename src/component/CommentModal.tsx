@@ -1,37 +1,35 @@
 import {
   View,
   Text,
-  TextInput,
-  Button,
   ActivityIndicator,
+  Image,
   Keyboard,
   StyleSheet,
-  Image,
+  TextInput,
   TouchableOpacity,
 } from 'react-native';
 import React, {useContext, useState} from 'react';
-import {StackScreenProps} from '@react-navigation/stack';
-import {MainStackParamList} from '../../navigation/MainRoute';
-import {useMutation, useQuery, useQueryClient} from 'react-query';
-import CommentService from '../../api/CommentService';
-import {AuthContext} from '../../context/AuthContext';
-import CommentTile from '../../component/CommentTile';
-import UserService from '../../api/UserService';
-import StringUtils from '../../utils/StringUtils';
+import {FlashList} from '@shopify/flash-list';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useQuery, useQueryClient, useMutation} from 'react-query';
+import CommentService from '../api/CommentService';
+import UserService from '../api/UserService';
+import {AuthContext} from '../context/AuthContext';
+import StringUtils from '../utils/StringUtils';
+import CommentTile from './CommentTile';
+import {IPost} from '../models/IPost';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import PostTile from '../../component/PostTile';
-import {FlashList} from '@shopify/flash-list';
 
-const CommentScreen = ({
-  navigation,
-  route,
-}: StackScreenProps<MainStackParamList, 'Comment'>) => {
+type CommentModalProp = {
+  post: IPost;
+};
+
+const CommentModal = (props: CommentModalProp) => {
   const {user} = useContext(AuthContext);
-  const {post} = route.params;
+  const {post} = props;
 
   const fetchUserQuery = useQuery({
     queryKey: ['user', user?.id],
@@ -67,16 +65,22 @@ const CommentScreen = ({
           flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
+          backgroundColor: 'white',
         }}>
         <ActivityIndicator size={'large'} />
       </View>
     );
   }
   return (
-    <View style={styles.flex}>
+    <View
+      style={{
+        ...styles.flex,
+        backgroundColor: 'white',
+      }}>
       <View style={styles.flex}>
         <FlashList
           // ListHeaderComponent={<PostTile post={post} />}
+          estimatedItemSize={66}
           data={fetchCommentQuery.data}
           keyExtractor={item => item.id}
           renderItem={({item}) => <CommentTile comment={item} />}
@@ -101,7 +105,7 @@ const CommentScreen = ({
         ) : (
           <Image
             resizeMethod="resize"
-            source={require('../../../public/images/default_ava.png')}
+            source={require('../../public/images/default_ava.png')}
           />
         )}
 
@@ -154,4 +158,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CommentScreen;
+export default CommentModal;

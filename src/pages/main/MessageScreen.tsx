@@ -40,10 +40,26 @@ const MessageScreen = ({
     onSuccess(data) {
       navigation.setOptions({
         headerTitle: () => <HeaderMessage profile={data.at(0)!} />,
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Meeting', {
+                roomId: route.params.roomId,
+              });
+            }}>
+            <Icon
+              style={{
+                marginRight: 8,
+              }}
+              name="video"
+              size={wp(7)}
+            />
+          </TouchableOpacity>
+        ),
       });
     },
   });
-  const [test, settest] = useState(1);
+
   useEffect(() => {
     socket.on('connect', () => {
       socket.emit(
@@ -83,6 +99,7 @@ const MessageScreen = ({
         flexDirection: 'column',
         flex: 1,
         paddingHorizontal: 12,
+        backgroundColor: 'white',
       }}>
       <View style={{flex: 1, paddingVertical: 4}}>
         {fetchUserQuery.isLoading || fetchProfileQuery.isLoading ? (

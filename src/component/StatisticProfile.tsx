@@ -1,5 +1,5 @@
 import {View, Text} from 'react-native';
-import React from 'react';
+import React, {memo} from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -31,4 +31,4 @@ const StatisticProfile = (props: StatisticProps) => {
   );
 };
 
-export default StatisticProfile;
+export default memo(StatisticProfile);

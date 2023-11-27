@@ -86,7 +86,7 @@ const CameraScreen = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: 'white'}}>
       <View style={styles.cameraContainer}>
         <Camera
           ref={ref => setCamera(ref)}
@@ -96,18 +96,32 @@ const CameraScreen = () => {
         />
       </View>
 
-      {image && (
-        <Image
-          style={{flex: 1}}
-          resizeMethod="resize"
-          source={{
-            uri: image,
-          }}
-        />
-      )}
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 12,
+        }}>
+        <TouchableOpacity
+          style={{
+            ...styles.button,
 
-      <Button title="Take picture" onPress={takePicture} />
-      <Button title="Get image gallery" onPress={pickImage} />
+            backgroundColor: 'rgb(0, 149, 246)',
+          }}
+          onPress={takePicture}>
+          <Text style={styles.textButton}>Take picture</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            ...styles.button,
+
+            backgroundColor: 'rgb(0, 149, 246)',
+          }}
+          onPress={pickImage}>
+          <Text style={styles.textButton}>Get image gallery</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -120,6 +134,19 @@ const styles = StyleSheet.create({
   fixedRatio: {
     flex: 1,
     aspectRatio: 1,
+  },
+  button: {
+    width: '80%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+    padding: 8,
+    borderRadius: 8,
+  },
+  textButton: {
+    fontSize: hp(2),
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 

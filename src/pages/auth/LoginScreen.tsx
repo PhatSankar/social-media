@@ -19,6 +19,7 @@ import supabase from '../../supabase/supabaseClient';
 import {useMutation} from 'react-query';
 import AuthService from '../../api/AuthService';
 import {AuthContext} from '../../context/AuthContext';
+import LottieView from 'lottie-react-native';
 
 type StackNavigation = StackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -47,6 +48,15 @@ const LoginScreen = () => {
 
   return (
     <View style={{...styles.container}}>
+      <LottieView
+        style={{
+          width: wp(100),
+          height: hp(30),
+        }}
+        source={require('../../../public/animations/social-media.json')}
+        autoPlay
+        loop
+      />
       <Text style={styles.introText}>Social Media</Text>
       <TextInputField placeholeder="Email" value={email} setValue={setEmail} />
       <TextInputField

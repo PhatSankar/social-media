@@ -1,26 +1,16 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
 import BottomTab from './BottomTab';
 import CameraScreen from '../pages/main/CameraScreen';
 import PostScreen from '../pages/main/PostScreen';
-import {NavigationProp, RouteProp} from '@react-navigation/native';
-import CommentScreen from '../pages/main/CommentScreen';
+import {NavigationProp} from '@react-navigation/native';
 import {IPost} from '../models/IPost';
-import {IUser} from '../models/IUser';
 import MessageScreen from '../pages/main/MessageScreen';
-import {Image, StyleSheet, Text, View} from 'react-native';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
-import StringUtils from '../utils/StringUtils';
-import {useNavigation} from '@react-navigation/native';
 import messaging from '@react-native-firebase/messaging';
 import * as RootNavigation from './RootNavigation';
 import {useEffect} from 'react';
-import {useMutation, useQuery} from 'react-query';
-import UserService from '../api/UserService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import MeetingScreen from '../pages/main/MeetingScreen';
 
 export type MainStackParamList = {
   Home: undefined;
@@ -33,6 +23,9 @@ export type MainStackParamList = {
   };
   Message: {
     profileId: string;
+    roomId: string;
+  };
+  Meeting: {
     roomId: string;
   };
 };
@@ -73,19 +66,27 @@ const MainRoute = () => {
       });
   }, []);
   return (
-    <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen
-        name="Home"
-        component={BottomTab}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen name="Comment" component={CommentScreen} />
-      <Stack.Screen name="Camera" component={CameraScreen} />
-      <Stack.Screen name="Post" component={PostScreen} />
-      <Stack.Screen name="Message" component={MessageScreen} />
-    </Stack.Navigator>
+    <BottomSheetModalProvider>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen
+          name="Home"
+          component={BottomTab}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen name="Camera" component={CameraScreen} />
+        <Stack.Screen name="Post" component={PostScreen} />
+        <Stack.Screen name="Message" component={MessageScreen} />
+        <Stack.Screen
+          name="Meeting"
+          component={MeetingScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Stack.Navigator>
+    </BottomSheetModalProvider>
   );
 };
 

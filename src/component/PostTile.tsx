@@ -6,7 +6,14 @@ import {
   TouchableOpacity,
   Button,
 } from 'react-native';
-import React, {useContext, useEffect, useMemo, useState} from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {IPost} from '../models/IPost';
 import {
   widthPercentageToDP as wp,
@@ -22,6 +29,10 @@ import {MainStackNavigation} from '../navigation/MainRoute';
 import LikeService from '../api/LikeService';
 import {AuthContext} from '../context/AuthContext';
 import {useMutation, useQuery, useQueryClient} from 'react-query';
+import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import CommentModal from './CommentModal';
+import moment from 'moment';
+import LottieView from 'lottie-react-native';
 
 type PostTileProps = {
   post: IPost;
@@ -33,6 +44,16 @@ const PostTile = (props: PostTileProps) => {
   const navigation = useNavigation<MainStackNavigation>();
   const {user} = useContext(AuthContext);
   const [isLiked, setIsLiked] = useState(false);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const snapPoints = useMemo(() => ['100%'], []);
+
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log('handleSheetChanges', index);
+  }, []);
 
   const queryClient = useQueryClient();
 
@@ -59,6 +80,7 @@ const PostTile = (props: PostTileProps) => {
       });
     },
   });
+
   const fetchIsLikesQuery = useQuery({
     queryKey: ['like', post.id, user?.id],
     queryFn: () => LikeService.fetchIsLike(post.id, user?.id!),
@@ -67,6 +89,27 @@ const PostTile = (props: PostTileProps) => {
       setIsLiked(data.length !== 0);
     },
   });
+
+  const animationLikeRef = useRef<LottieView>(null);
+
+  const isFirstRun = useRef(true);
+  useEffect(() => {
+    if (!isFirstRun.current) {
+      if (isLiked) {
+        animationLikeRef.current?.play(0, 80);
+      } else {
+        animationLikeRef.current?.play(80, 181);
+      }
+    } else {
+      if (isLiked) {
+        animationLikeRef.current?.play(80, 80);
+      } else {
+        animationLikeRef.current?.play(0, 0);
+      }
+      isFirstRun.current = false;
+    }
+  }, [isLiked]);
+
   return (
     <View
       style={{
@@ -118,14 +161,17 @@ const PostTile = (props: PostTileProps) => {
           uri: `${StringUtils.convertUrlToLocalEmulator(post.image_url)}`,
         }}
       />
-      <View style={styles.divider} />
-
       <View
         style={{
-          marginHorizontal: 8,
+          marginBottom: 12,
         }}>
-        <View style={{flexDirection: 'row', gap: 8}}>
-          <TouchableOpacity
+        <View
+          style={{
+            flexDirection: 'row',
+            gap: 8,
+            alignItems: 'center',
+          }}>
+          {/* <TouchableOpacity
             onPress={
               fetchIsLikesQuery.isLoading
                 ? undefined
@@ -145,49 +191,88 @@ const PostTile = (props: PostTileProps) => {
               size={wp(6)}
               color={isLiked ? 'red' : undefined}
             />
+          </TouchableOpacity> */}
+
+          <TouchableOpacity
+            onPress={
+              fetchIsLikesQuery.isLoading
+                ? undefined
+                : () =>
+                    isLiked
+                      ? createDeleteLikeMutation.mutate({
+                          postId: post.id,
+                          userId: user?.id!,
+                        })
+                      : createInsertLikeMutation.mutate({
+                          postId: post.id,
+                          userId: user?.id!,
+                        })
+            }>
+            <LottieView
+              ref={animationLikeRef}
+              autoPlay={false}
+              loop={false}
+              style={{
+                // backgroundColor: 'red',
+                height: wp(15),
+                width: wp(15),
+              }}
+              source={require('../../public/animations/like.json')}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('Comment', {
-                post: post,
-              });
+              handlePresentModalPress();
             }}>
-            <SimpleLineIcons name="bubble" size={wp(6)} />
+            <SimpleLineIcons
+              name="bubble"
+              size={wp(5)}
+              color={'rgb(111,111,111)'}
+            />
           </TouchableOpacity>
         </View>
-        <Text
-          style={{
-            fontSize: wp(4.5),
-          }}>
-          {post.likes_count} likes
-        </Text>
-        <View
-          style={{
-            flexDirection: 'row',
-            gap: 4,
-          }}>
-          <Text numberOfLines={!showMore ? 2 : 0}>
-            <Text
-              style={{
-                ...styles.textName,
-              }}>
-              {post.users?.name}{' '}
-            </Text>
-            <Text style={styles.textCaption}>
-              {post.caption.length > 30 && !showMore
-                ? `${post.caption.substring(0, 30 - 3)}... `
-                : post.caption}
-            </Text>
-            {post.caption.length > 30 && (
-              <Text
-                style={{fontSize: wp(4.3)}}
-                onPress={() => setShowMore(!showMore)}>
-                {!showMore ? 'Show More' : 'Show Less'}
-              </Text>
-            )}
+        <View style={{marginHorizontal: 8}}>
+          <Text
+            style={{
+              fontSize: wp(4.5),
+            }}>
+            {post.likes_count} likes ∙ {moment(post.created_at).fromNow()}
           </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: 4,
+            }}>
+            <Text numberOfLines={!showMore ? 2 : 0}>
+              <Text
+                style={{
+                  ...styles.textName,
+                }}>
+                {post.users?.name}{' '}
+              </Text>
+              <Text style={styles.textCaption}>
+                {post.caption.length > 30 && !showMore
+                  ? `${post.caption.substring(0, 30 - 3)}... `
+                  : post.caption}
+              </Text>
+              {post.caption.length > 30 && (
+                <Text
+                  style={{fontSize: wp(4.3)}}
+                  onPress={() => setShowMore(!showMore)}>
+                  {!showMore ? 'Show More' : 'Show Less'}
+                </Text>
+              )}
+            </Text>
+          </View>
         </View>
       </View>
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={0}
+        snapPoints={snapPoints}
+        onChange={handleSheetChanges}>
+        <CommentModal post={post} />
+      </BottomSheetModal>
     </View>
   );
 };

@@ -18,8 +18,8 @@ const TextInputField = (props: TextInputFieldProps) => {
       style={{
         width: '80%',
         borderWidth: 0.5,
+        borderRadius: 8,
         margin: 8,
-        backgroundColor: 'rgb(250, 250, 250)',
       }}
     />
   );

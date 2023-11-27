@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
   searchScreen: {
     flex: 1,
     padding: 8,
+    backgroundColor: 'white',
   },
   searchContainer: {
     borderWidth: 0.5,
